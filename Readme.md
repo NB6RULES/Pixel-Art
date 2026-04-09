@@ -226,6 +226,16 @@ A Python script for image processing and G-code generation is planned.
 **Merin Menamparambil**  
 - GitHub: [@merinmenamparambil](https://github.com/merinmenamparambil)
 
+## CoreXY References
+
+### [CoreXY.com](https://corexy.com/)
+The original reference site documenting the CoreXY motion system concept, belt routing geometry, and kinematics. Used as the primary reference for understanding how the two-motor H-bot style drive works and how to correctly route belts to achieve true CoreXY motion without shear forces.
+
+### [Jubilee (Machine Agency)](https://github.com/machineagency/jubilee)
+An open-source CoreXY toolchanging machine designed for research and fabrication. Referenced for its well-engineered CoreXY gantry design, use of 2020 extrusion framing, and modular tool head approach — directly relevant to how we've structured our own gantry and end effector mounting.
+
+---
+
 ## Acknowledgments
 
 - Inspired by bead art and CNC plotters
