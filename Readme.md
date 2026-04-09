@@ -1,4 +1,4 @@
-﻿# Pixel-Art
+# Pixel-Art
 
 A CoreXY bead-placement machine for creating physical monochrome pixel art on perforated acrylic sheets.
 
@@ -29,6 +29,7 @@ Pixel-Art is an open-source CNC machine that automatically places beads into a g
 ## Bill of Materials
 
 ### Frame & Motion
+
 - 2020 V-slot aluminum extrusion
 - GT2 timing belt + pulleys (16T/20T)
 - NEMA17 stepper motors (×2 for XY)
@@ -36,22 +37,26 @@ Pixel-Art is an open-source CNC machine that automatically places beads into a g
 - 625 bearings for idlers
 
 ### Electronics
+
 - ESP32 development board
 - DRV8825 / TMC2209 stepper drivers
 - 12V/24V power supply
 - Limit switches (×3)
 
 ### End Effector
+
 - Bead dropper mechanism (servo/solenoid actuated)
 - Bead hopper/feeder
 
 ### Substrate
+
 - Perforated acrylic sheet (hole spacing matches resolution)
 - Beads (2–10 mm diameter, black/white/grey)
 
 ## Repository Structure
 
 ```
+Pixel-Art/
 ├── Core-XY Movement - Nadec/
 │   ├── Solidworks Files/      # Editable CAD files
 │   ├── STL AND STEP FILES/    # Export files for fabrication
@@ -70,14 +75,101 @@ Pixel-Art is an open-source CNC machine that automatically places beads into a g
 - [ ] Image-to-Gcode converter
 - [ ] Assembly documentation
 
+---
+
+## Git Workflow
+
+### First Time Setup (Clone the Repo)
+
+```bash
+git clone https://github.com/NB6RULES/Pixel-Art.git
+cd Pixel-Art
+git lfs install
+git lfs pull
+```
+
+> **Note:** This repo uses Git LFS for large STL/STEP files. Run `git lfs install` once on your machine.
+
+### Daily Workflow
+
+#### 1. Always Pull Before You Start Working
+
+```bash
+git pull
+```
+
+This syncs your local copy with the latest changes from GitHub.
+
+#### 2. Check What's Changed
+
+```bash
+git status
+```
+
+Shows modified, staged, and untracked files.
+
+#### 3. Stage Your Changes
+
+```bash
+# Add specific file
+git add filename.SLDPRT
+
+# Add all changes
+git add .
+```
+
+#### 4. Commit Your Changes
+
+```bash
+git commit -m "Brief description of what you changed"
+```
+
+Write clear commit messages — future you will thank present you.
+
+#### 5. Pull Again Before Pushing
+
+```bash
+git pull
+```
+
+**Always pull before push** to avoid merge conflicts, especially when collaborating.
+
+#### 6. Push to GitHub
+
+```bash
+git push
+```
+
+### Quick Reference
+
+| Command | What it does |
+|---------|--------------|
+| `git clone <url>` | Download repo for the first time |
+| `git pull` | Get latest changes from GitHub |
+| `git status` | See what files changed |
+| `git add .` | Stage all changes |
+| `git commit -m "msg"` | Save changes locally with a message |
+| `git push` | Upload commits to GitHub |
+| `git log --oneline` | View commit history |
+
+### Golden Rule
+
+```
+PULL → WORK → ADD → COMMIT → PULL → PUSH
+```
+
+---
+
 ## Getting Started
 
 ### Prerequisites
+
 - SolidWorks (or use STEP files for other CAD software)
 - 3D printer for custom brackets
 - Basic CNC/electronics assembly experience
 
 ### Assembly
+
 *Documentation in progress*
 
 ## Firmware
@@ -92,9 +184,13 @@ Image → Dithering/Thresholding → Grid Mapping → G-code → ESP32-GRBL → 
 
 A Python script for image processing and G-code generation is planned.
 
+---
+
 ## License
 
 *TBD*
+
+---
 
 ## Author
 
