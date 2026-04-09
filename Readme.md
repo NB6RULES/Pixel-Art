@@ -2,6 +2,10 @@
 
 A CoreXY bead-placement machine for creating physical monochrome pixel art on perforated acrylic sheets.
 
+## 3D Model Preview
+
+[View 3D Model on Sketchfab](https://sketchfab.com/3d-models/pixel-art-first-draft-e8df2f01db034dc6a11d05934eb7d457)
+
 ## Overview
 
 Pixel-Art is an open-source CNC machine that automatically places beads into a grid of holes on an acrylic sheet, producing physical pixel art from digital images. The machine uses a CoreXY motion system for fast, precise XY movement and a bead dropper mechanism as the end effector.
@@ -65,10 +69,6 @@ Pixel-Art/
 │   └── Documentation.md
 └── README.md
 ```
-
-## 3D Model Preview
-
-[View 3D Model on Sketchfab](https://sketchfab.com/3d-models/pixel-art-first-draft-e8df2f01db034dc6a11d05934eb7d457)
 
 ## Build Status
 
@@ -175,6 +175,19 @@ PULL → WORK → ADD → COMMIT → PULL → PUSH
 ### Assembly
 
 *Documentation in progress*
+
+## Dependencies & Key Libraries
+
+### [GRBL](https://github.com/grbl/grbl)
+The original open-source, high-performance G-code motion controller written in optimized C. GRBL is the foundation of the motion control strategy used in this project — it handles real-time step generation, acceleration planning, and G-code parsing. We reference it as the upstream standard that our ESP32 port is based on.
+
+### [Grbl_ESP32 (bdring)](https://github.com/bdring/grbl_esp32)
+A port of GRBL adapted specifically for the ESP32 microcontroller. We chose this because the ESP32 offers Wi-Fi connectivity, more GPIO pins, and faster processing than the original Arduino Uno target. This firmware runs directly on our controller board and interprets G-code sent from the image processing pipeline.
+
+### [NeoPI_Wireless (saheenpalayi)](https://github.com/saheenpalayi/NeoPI_Wireless)
+A wireless interface layer for sending G-code over Wi-Fi to an ESP32-based CNC controller. We use this (or draw from its approach) to enable cable-free communication between the host computer and the machine — the image-to-G-code output is streamed wirelessly to the ESP32 rather than requiring a USB connection.
+
+---
 
 ## Firmware
 
