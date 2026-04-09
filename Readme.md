@@ -192,10 +192,22 @@ A Python script for image processing and G-code generation is planned.
 
 ---
 
-## Author
+## Authors
 
 **Nadec Biju**  
 - GitHub: [@NB6RULES](https://github.com/NB6RULES)
+
+**Architha B K**  
+- GitHub: [@architabk618-hue](https://github.com/architabk618-hue)
+
+**Kurian**  
+- GitHub: [@Kuriyaappi](https://github.com/Kuriyaappi)
+
+**Kevin J Jijo**  
+- GitHub: [@mrkubby](https://github.com/mrkubby)
+
+**Merin Menamparambil**  
+- GitHub: [@merinmenamparambil](https://github.com/merinmenamparambil)
 
 ## Acknowledgments
 
