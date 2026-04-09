@@ -68,7 +68,7 @@ Pixel-Art/
 
 ## 3D Model Preview
 
-<div class="sketchfab-embed-wrapper"> <iframe title="pixel art first draft" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/e8df2f01db034dc6a11d05934eb7d457/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/pixel-art-first-draft-e8df2f01db034dc6a11d05934eb7d457?utm_medium=embed&utm_campaign=share-popup&utm_content=e8df2f01db034dc6a11d05934eb7d457" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> pixel art first draft </a> by <a href="https://sketchfab.com/Nb6_rules?utm_medium=embed&utm_campaign=share-popup&utm_content=e8df2f01db034dc6a11d05934eb7d457" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Nb6_rules </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=e8df2f01db034dc6a11d05934eb7d457" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
+[View 3D Model on Sketchfab](https://sketchfab.com/3d-models/pixel-art-first-draft-e8df2f01db034dc6a11d05934eb7d457)
 
 ## Build Status
 
