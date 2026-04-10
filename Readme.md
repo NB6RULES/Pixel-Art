@@ -23,6 +23,34 @@ Pixel-Art is an open-source CNC machine that automatically places beads into a g
 | Motors | NEMA17 steppers |
 | Belt | GT2 timing belt |
 
+## Roles 
+
+MACHINE GANTERY -- NADEC
+END EFFECTOR --- KEVIN
+ELECTRONICS -- MERIN
+FIRMWARE ---  ARCHITHA
+INTERFACE --- KURIAN
+DOCUMENTION --- MERIN
+FABRICATION AND INTERGRATION --- KURIAN
+PRESENTAION & VIDEO (1 MIN) --- ARCHITHA
+
+## TIMELINE
+
+APRIL 09 --  INITAL DISCUSSION AND TEAM ALLOCATION
+APRIL 10 --  SKETCH THE DESIGN, MACHINE GANTERY DESIGN AND INTERFACE DESIGN (GET THE GCOD FOR MACHINE)
+APRIL 11 --  DESIGN AND FIX THE END EFFECTOR WORKING STRUCTER 
+APRIL 12 --  END EFFECTOR DESIGN ( GET THE PROPER MEASURMENT FOR THE BEADS AND BASED ON THAT WE NEEDED TO WORK, **DO IT PARAMETRIC** ), ELECTROCNIC DESIGN 
+APRIL 13 --  CHECK THE GCODES WORKING GANTERY MOVEMENT, FIRMWARE 
+APRIL 14 --
+APRIL 15 -- FABRICATION AND INTERGRATION
+APRIL 16 -- 
+APRIL 17 --
+APRIL 18 --
+APRIL 19 --
+APRIL (20 - 21) -- VIDEO EDITIONG &  PRESENTAION
+
+
+
 ## How It Works
 
 1. **Image Input** — A monochrome image is converted to G-code with pixel coordinates mapped to hole positions
@@ -211,16 +239,16 @@ A Python script for image processing and G-code generation is planned.
 
 ## Authors
 
-**Nadec Biju**  
+**Nadec Biju**   - COREXY
 - GitHub: [@NB6RULES](https://github.com/NB6RULES)
 
 **Architha B K**  
 - GitHub: [@architabk618-hue](https://github.com/architabk618-hue)
 
-**Kurian**  
+**Kurian**   - INTERFACE 
 - GitHub: [@Kuriyaappi](https://github.com/Kuriyaappi)
 
-**Kevin J Jijo**  
+**Kevin J Jijo**  - END E
 - GitHub: [@mrkubby](https://github.com/mrkubby)
 
 **Merin Menamparambil**  
