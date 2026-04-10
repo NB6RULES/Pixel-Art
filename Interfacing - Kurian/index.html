@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Bead Placer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header {
+      background: #16213e;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #0f3460;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #e94560;
+      letter-spacing: 0.5px;
+    }
+
+    #btn-gcode {
+      background: #e94560;
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #btn-gcode:hover { background: #c73652; }
+
+    /* ── Main layout ────────────────────────────────────────── */
+    main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────── */
+    aside {
+      width: 210px;
+      min-width: 210px;
+      background: #16213e;
+      border-right: 1px solid #0f3460;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      overflow-y: auto;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #667;
+      margin-bottom: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-row label { font-size: 0.83rem; flex: 1; }
+    .input-row input[type="number"] {
+      width: 58px;
+      background: #0f3460;
+      border: 1px solid #1a4a8a;
+      color: #e0e0e0;
+      padding: 5px 7px;
+      border-radius: 4px;
+      font-size: 0.83rem;
+    }
+    .unit { font-size: 0.74rem; color: #667; }
+
+    #grid-info {
+      font-size: 0.76rem;
+      color: #99a;
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+
+    #warning {
+      display: none;
+      background: #5c2e00;
+      border: 1px solid #a05200;
+      color: #ffcc80;
+      font-size: 0.75rem;
+      padding: 6px 8px;
+      border-radius: 4px;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .tool-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tool-btn {
+      background: #0f3460;
+      border: 1px solid #1a4a8a;
+      color: #bbc;
+      padding: 8px 11px;
+      border-radius: 5px;
+      font-size: 0.81rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .tool-btn:hover { background: #1a4a8a; color: #fff; }
+    .tool-btn.active {
+      background: #e94560;
+      border-color: #e94560;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .action-btn {
+      background: #0f3460;
+      border: 1px solid #1a4a8a;
+      color: #bbc;
+      padding: 8px 11px;
+      border-radius: 5px;
+      font-size: 0.81rem;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .action-btn:hover { background: #1a4a8a; color: #fff; }
+
+    /* ── Canvas area ────────────────────────────────────────── */
+    #canvas-wrapper {
+      flex: 1;
+      overflow: auto;
+      background: #0d1b2a;
+      padding: 20px;
+    }
+
+    #grid-canvas {
+      display: block;
+      cursor: crosshair;
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Pixel Bead Placer — CoreXY</h1>
+  <button id="btn-gcode">Generate &amp; Download GCode</button>
+</header>
+
+<main>
+  <aside>
+    <div>
+      <div class="section-label">Settings</div>
+      <div class="input-row">
+        <label for="bead-size">Bead size</label>
+        <input type="number" id="bead-size" value="10" min="1" max="200" step="0.5">
+        <span class="unit">mm</span>
+      </div>
+      <div id="grid-info">Grid: 40 × 40<br>1600 beads</div>
+      <div id="warning">Large grid — GCode file will be big.</div>
+      <div class="input-row" style="margin-top:10px">
+        <label for="dwell-time">Dwell time</label>
+        <input type="number" id="dwell-time" value="300" min="10" max="9999" step="10">
+        <span class="unit">ms</span>
+      </div>
+      <div style="font-size:0.72rem;color:#667;margin-top:4px">Wait per bead (G4)</div>
+    </div>
+
+    <div>
+      <div class="section-label">Tools</div>
+      <div class="tool-group">
+        <button class="tool-btn active" data-tool="pen">&#9679; Pen (Black)</button>
+        <button class="tool-btn" data-tool="eraser">&#9675; Eraser (White)</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Actions</div>
+      <div class="tool-group">
+        <button class="action-btn" id="btn-import">&#8682; Import Image</button>
+        <button class="action-btn" id="btn-clear">&#10005; Clear All</button>
+      </div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+  </aside>
+
+  <div id="canvas-wrapper">
+    <canvas id="grid-canvas"></canvas>
+  </div>
+</main>
+
+<script>
+  // ── State ─────────────────────────────────────────────────────
+  const canvas       = document.getElementById('grid-canvas');
+  const ctx          = canvas.getContext('2d');
+  const beadSizeInput = document.getElementById('bead-size');
+  const dwellInput   = document.getElementById('dwell-time');
+  const gridInfo     = document.getElementById('grid-info');
+  const warningEl    = document.getElementById('warning');
+  const fileInput    = document.getElementById('file-input');
+
+  let beadSizeMm = 10;
+  let cols, rows, cellPx;
+  let grid = [];          // grid[row][col] : 0=white, 1=black
+  let isDrawing = false;
+  let activeTool = 'pen';
+  let lastPainted = null;
+
+  // ── Grid initialisation ───────────────────────────────────────
+  function initGrid(preserveData) {
+    beadSizeMm = parseFloat(beadSizeInput.value) || 10;
+    beadSizeMm = Math.max(1, Math.min(200, beadSizeMm));
+
+    cols = Math.floor(400 / beadSizeMm);
+    rows = Math.floor(400 / beadSizeMm);
+
+    // Pixel size per cell: fill ~620px, clamped 3–24px
+    cellPx = Math.max(3, Math.min(24, Math.floor(620 / cols)));
+
+    canvas.width  = cols * cellPx;
+    canvas.height = rows * cellPx;
+
+    if (preserveData && grid.length > 0) {
+      // Keep existing data where it fits
+      const old = grid;
+      const oldRows = old.length;
+      const oldCols = oldRows > 0 ? old[0].length : 0;
+      grid = Array.from({ length: rows }, (_, r) =>
+        new Uint8Array(cols).map((_, c) =>
+          (r < oldRows && c < oldCols) ? old[r][c] : 0
+        )
+      );
+    } else {
+      grid = Array.from({ length: rows }, () => new Uint8Array(cols));
+    }
+
+    const total = cols * rows;
+    gridInfo.textContent = `Grid: ${cols} × ${rows}\n${total.toLocaleString()} beads`;
+    warningEl.style.display = total > 40000 ? 'block' : 'none';
+
+    render();
+  }
+
+  // ── Full canvas render ────────────────────────────────────────
+  function render() {
+    // White background
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Black cells
+    ctx.fillStyle = '#1a1a1a';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (grid[r][c] === 1) {
+          ctx.fillRect(c * cellPx, r * cellPx, cellPx, cellPx);
+        }
+      }
+    }
+
+    // Grid lines
+    if (cellPx >= 6) {
+      drawGridLines(1, '#cccccc', 0.5);
+    } else if (cellPx >= 3) {
+      // Only every 10th line when cells are tiny
+      drawGridLines(10, '#bbbbbb', 0.5);
+    }
+  }
+
+  function drawGridLines(step, color, lineWidth) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    for (let c = 0; c <= cols; c += step) {
+      ctx.moveTo(c * cellPx + 0.5, 0);
+      ctx.lineTo(c * cellPx + 0.5, canvas.height);
+    }
+    for (let r = 0; r <= rows; r += step) {
+      ctx.moveTo(0, r * cellPx + 0.5);
+      ctx.lineTo(canvas.width, r * cellPx + 0.5);
+    }
+    ctx.stroke();
+  }
+
+  // ── Paint a single cell (incremental, fast) ───────────────────
+  function paintCell(col, row) {
+    if (col < 0 || col >= cols || row < 0 || row >= rows) return;
+    const val = activeTool === 'pen' ? 1 : 0;
+    if (grid[row][col] === val) return;
+    grid[row][col] = val;
+
+    ctx.fillStyle = val === 1 ? '#1a1a1a' : '#f5f5f5';
+    ctx.fillRect(col * cellPx, row * cellPx, cellPx, cellPx);
+
+    // Restore grid lines over this cell
+    if (cellPx >= 6) {
+      ctx.strokeStyle = '#cccccc';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(col * cellPx + 0.5,       row * cellPx);
+      ctx.lineTo(col * cellPx + 0.5,       (row + 1) * cellPx);
+      ctx.moveTo((col + 1) * cellPx + 0.5, row * cellPx);
+      ctx.lineTo((col + 1) * cellPx + 0.5, (row + 1) * cellPx);
+      ctx.moveTo(col * cellPx,       row * cellPx + 0.5);
+      ctx.lineTo((col + 1) * cellPx, row * cellPx + 0.5);
+      ctx.moveTo(col * cellPx,       (row + 1) * cellPx + 0.5);
+      ctx.lineTo((col + 1) * cellPx, (row + 1) * cellPx + 0.5);
+      ctx.stroke();
+    }
+  }
+
+  function cellFromEvent(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      col: Math.floor((e.clientX - rect.left)  / cellPx),
+      row: Math.floor((e.clientY - rect.top)   / cellPx)
+    };
+  }
+
+  // ── Mouse drawing ─────────────────────────────────────────────
+  canvas.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    isDrawing = true;
+    const { col, row } = cellFromEvent(e);
+    lastPainted = { col, row };
+    paintCell(col, row);
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (!isDrawing) return;
+    const { col, row } = cellFromEvent(e);
+    if (lastPainted && lastPainted.col === col && lastPainted.row === row) return;
+    lastPainted = { col, row };
+    paintCell(col, row);
+  });
+
+  window.addEventListener('mouseup',    () => { isDrawing = false; lastPainted = null; });
+  canvas.addEventListener('mouseleave', () => { isDrawing = false; lastPainted = null; });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  // ── Tool buttons ──────────────────────────────────────────────
+  document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTool = btn.dataset.tool;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // ── Bead size change ──────────────────────────────────────────
+  beadSizeInput.addEventListener('change', () => {
+    const hasData = grid.some(row => row.some(v => v === 1));
+    if (hasData) {
+      if (!confirm('Changing bead size will reset the grid. Continue?')) {
+        beadSizeInput.value = beadSizeMm;
+        return;
+      }
+    }
+    initGrid(false);
+  });
+
+  // ── Clear all ─────────────────────────────────────────────────
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (!confirm('Clear all beads?')) return;
+    for (let r = 0; r < rows; r++) grid[r].fill(0);
+    render();
+  });
+
+  // ── Import image ──────────────────────────────────────────────
+  document.getElementById('btn-import').addEventListener('click', () => {
+    fileInput.value = '';
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const offscreen = document.createElement('canvas');
+      offscreen.width  = cols;
+      offscreen.height = rows;
+      const octx = offscreen.getContext('2d');
+
+      // White background (so transparent pixels → white beads)
+      octx.fillStyle = '#ffffff';
+      octx.fillRect(0, 0, cols, rows);
+      octx.drawImage(img, 0, 0, cols, rows);
+
+      const data = octx.getImageData(0, 0, cols, rows).data;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i = (r * cols + c) * 4;
+          const luma = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          grid[r][c] = luma < 128 ? 1 : 0;
+        }
+      }
+
+      URL.revokeObjectURL(url);
+      render();
+    };
+    img.onerror = () => {
+      alert('Could not load image.');
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  });
+
+  // ── GCode generation (grbl_esp32 / GRBL 1.1 compatible) ─────────
+  document.getElementById('btn-gcode').addEventListener('click', () => {
+    const lines    = [];
+    const now      = new Date().toISOString();
+    const dwellMs  = Math.max(10, parseInt(dwellInput.value) || 300);
+
+    lines.push(`; Pixel Bead Placer — GCode`);
+    lines.push(`; Firmware    : grbl_esp32 (GRBL 1.1 compatible)`);
+    lines.push(`; Bead size   : ${beadSizeMm} mm`);
+    lines.push(`; Grid        : ${cols} x ${rows}  (${(cols * rows).toLocaleString()} beads)`);
+    lines.push(`; Plate       : 400 x 400 mm`);
+    lines.push(`; Dwell/bead  : ${dwellMs} ms`);
+    lines.push(`; Generated   : ${now}`);
+    lines.push(`;`);
+    lines.push(`; Color control (spindle outputs on grbl_esp32):`);
+    lines.push(`;   M3 S100  →  Black bead feeder ON (spindle CW)`);
+    lines.push(`;   M4 S100  →  White bead feeder ON (spindle CCW)`);
+    lines.push(`;   M5       →  Feeder OFF`);
+    lines.push(`;   G4 P${dwellMs}  →  Dwell ${dwellMs} ms — wait for bead to seat`);
+    lines.push(`;`);
+    lines.push(`; Snake path: even rows left→right, odd rows right→left`);
+    lines.push(``);
+    lines.push(`G21         ; set units to mm`);
+    lines.push(`G90         ; absolute positioning`);
+    lines.push(`G28         ; home all axes`);
+    lines.push(``);
+    lines.push(`; ── Bead placement ──────────────────────────────────────────`);
+
+    // -1 = no feeder active yet
+    let activeFeeder = -1;
+
+    for (let r = 0; r < rows; r++) {
+      const ltr = (r % 2 === 0);
+      lines.push(``);
+      lines.push(`; Row ${r}  (${ltr ? 'L→R' : 'R→L'})`);
+
+      for (let ci = 0; ci < cols; ci++) {
+        const c     = ltr ? ci : (cols - 1 - ci);
+        const color = grid[r][c];  // 0=white, 1=black
+
+        const xMm = (c * beadSizeMm + beadSizeMm / 2).toFixed(2);
+        const yMm = (r * beadSizeMm + beadSizeMm / 2).toFixed(2);
+
+        // Switch feeder only when color changes — emit M5 first to stop current feeder
+        if (color !== activeFeeder) {
+          if (activeFeeder !== -1) lines.push(`M5              ; stop previous feeder`);
+          if (color === 1) {
+            lines.push(`M3 S100         ; black bead feeder ON`);
+          } else {
+            lines.push(`M4 S100         ; white bead feeder ON`);
+          }
+          activeFeeder = color;
+        }
+
+        lines.push(`G0 X${xMm} Y${yMm} F3000`);
+        lines.push(`G4 P${dwellMs}`);
+      }
+    }
+
+    lines.push(``);
+    lines.push(`M5          ; all feeders off`);
+    lines.push(`G28         ; return home`);
+    lines.push(`M30         ; end of program`);
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'bead_art.gcode';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────
+  initGrid(false);
+</script>
+</body>
+</html>
