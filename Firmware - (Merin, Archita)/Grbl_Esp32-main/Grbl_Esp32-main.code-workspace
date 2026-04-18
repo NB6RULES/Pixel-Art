@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../../../Downloads/Grbl_Esp32-main"
+		},
+		{
+			"name": "Grbl_Esp32-main",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
