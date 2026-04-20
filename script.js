@@ -15,9 +15,9 @@ const whiteBeadSideInput = document.getElementById('white-bead-side');
 const moveSpeedInput     = document.getElementById('move-speed');
 
 // Servo S-values (calibrated)
-const S_LEFT  = 110;
-const S_REST  = 58;
-const S_RIGHT = 22;
+const S_LEFT  = 120;
+const S_REST  = 79;
+const S_RIGHT = 40;
 const gridInfoEl     = document.getElementById('grid-info');
 const warningEl      = document.getElementById('warning');
 const fileInput      = document.getElementById('file-input');
